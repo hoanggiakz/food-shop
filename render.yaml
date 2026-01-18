@@ -1,0 +1,24 @@
+# Render Blueprint - Tự động cấu hình khi deploy
+# Đặt file này trong root folder của project
+
+services:
+  - type: web
+    name: food-shop
+    env: node
+    region: singapore
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: EMAIL_SERVICE
+        value: gmail
+      - key: EMAIL_USER
+        sync: false  # Set thủ công trong dashboard
+      - key: EMAIL_PASSWORD
+        sync: false  # Set thủ công trong dashboard
+    healthCheckPath: /
+    autoDeploy: true
