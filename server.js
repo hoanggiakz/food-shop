@@ -9,6 +9,18 @@ const fs = require('fs');
 // Nếu muốn dùng file .env, chạy: npm install dotenv
 // Sau đó uncomment dòng dưới:
 // require('dotenv').config();
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        imgSrc: ["'self'", "data:"],
+      },
+    },
+  })
+);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
