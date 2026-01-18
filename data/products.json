@@ -1,0 +1,17 @@
+[
+  {
+    "id": 1768731869170,
+    "name": "Bánh bông lan",
+    "price": 20000,
+    "unit": "phần",
+    "description": "Ngon lắm",
+    "images": [
+      "/uploads/z74312712716310fd619cd46dc5ca80643eb020d19d8ab_1768731869166.jpg"
+    ],
+    "thumbnail": "/uploads/z74312712716310fd619cd46dc5ca80643eb020d19d8ab_1768731869166.jpg",
+    "sellerId": 1768730749238,
+    "sellerEmail": "giabodoiday@gmail.com",
+    "status": "active",
+    "createdAt": "2026-01-18T10:24:29.170Z"
+  }
+]

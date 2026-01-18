@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🍔Phuong Handmade</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #ff6b6b;
+      --secondary: #ffd93d;
+      --success: #6bcf7f;
+      --bg-light: #fff5f5;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, var(--bg-light) 0%, #fff 100%);
+      min-height: 100vh;
+    }
+    
+    .navbar {
+      background: linear-gradient(135deg, var(--primary) 0%, #ff8787 100%);
+      box-shadow: 0 4px 12px rgba(255, 107, 107, 0.2);
+    }
+    
+    .navbar-brand {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: white !important;
+    }
+    
+    .product-card {
+      border: none;
+      border-radius: 20px;
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
+      background: white;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      cursor: pointer;
+      height: 100%;
+    }
+    
+    .product-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
+    }
+    
+    .product-img {
+      height: 250px;
+      object-fit: cover;
+      width: 100%;
+    }
+    
+    .product-price {
+      color: var(--primary);
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    
+    .product-name {
+      font-weight: 600;
+      color: #333;
+      margin: 10px 0;
+      font-size: 1.1rem;
+    }
+    
+    .hero-section {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      padding: 60px 0;
+      margin-bottom: 40px;
+      border-radius: 0 0 50px 50px;
+      box-shadow: 0 10px 30px rgba(255, 107, 107, 0.2);
+    }
+    
+    .hero-title {
+      font-size: 3rem;
+      font-weight: bold;
+      color: white;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    .hero-subtitle {
+      font-size: 1.3rem;
+      color: white;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 50px;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 80px 20px;
+    }
+    
+    .empty-state i {
+      font-size: 5rem;
+      color: #ddd;
+    }
+    
+    @media (max-width: 768px) {
+      .hero-title {
+        font-size: 2rem;
+      }
+      
+      .hero-subtitle {
+        font-size: 1rem;
+      }
+      
+      .product-img {
+        height: 200px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+      <a class="navbar-brand" href="/">
+        <i class="fas fa-utensils"></i> Food Shop
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link active" href="/">Trang chủ</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/login.html">
+              <i class="fas fa-sign-in-alt"></i> Đăng nhập
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <div class="hero-section">
+    <div class="container text-center">
+      <h1 class="hero-title">🍔 Chào mừng đến Phuong Handmade!</h1>
+      <p class="hero-subtitle">Đồ ăn tươi ngon, 100% Handmade</p>
+    </div>
+  </div>
+
+  <!-- Products Section -->
+  <div class="container mb-5">
+    <div id="loading" class="loading">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Đang tải...</span>
+      </div>
+      <p class="mt-3">Đang tải sản phẩm...</p>
+    </div>
+
+    <div id="products-container" class="row g-4" style="display: none;"></div>
+
+    <div id="empty-state" class="empty-state" style="display: none;">
+      <i class="fas fa-shopping-basket"></i>
+      <h3 class="mt-4">Chưa có sản phẩm nào</h3>
+      <p class="text-muted">Vui lòng quay lại sau!</p>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-dark text-white text-center py-4 mt-5">
+    <div class="container">
+      <p class="mb-0">&copy; PhuongHandmade. Made by Gia Bố Đời <i class="fas fa-heart text-danger"></i></p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Lấy và hiển thị sản phẩm
+    async function loadProducts() {
+      try {
+        const response = await fetch('/api/products');
+        const products = await response.json();
+
+        const loading = document.getElementById('loading');
+        const container = document.getElementById('products-container');
+        const emptyState = document.getElementById('empty-state');
+
+        loading.style.display = 'none';
+
+        if (products.length === 0) {
+          emptyState.style.display = 'block';
+          return;
+        }
+
+        container.style.display = 'flex';
+
+        products.forEach(product => {
+          const col = document.createElement('div');
+          col.className = 'col-12 col-sm-6 col-md-4 col-lg-3';
+          
+          col.innerHTML = `
+            <div class="product-card" onclick="viewProduct(${product.id})">
+              <img src="${product.thumbnail}" class="product-img" alt="${product.name}">
+              <div class="card-body">
+                <h5 class="product-name">${product.name}</h5>
+                <p class="product-price">${product.price.toLocaleString('vi-VN')} đ/${product.unit}</p>
+              </div>
+            </div>
+          `;
+          
+          container.appendChild(col);
+        });
+      } catch (error) {
+        console.error('Error loading products:', error);
+        document.getElementById('loading').innerHTML = 
+          '<div class="alert alert-danger">Không thể tải sản phẩm. Vui lòng thử lại!</div>';
+      }
+    }
+
+    function viewProduct(productId) {
+      window.location.href = `/product.html?id=${productId}`;
+    }
+
+    // Load products khi trang được tải
+    loadProducts();
+  </script>
+</body>
+</html>

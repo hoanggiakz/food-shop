@@ -1,0 +1,52 @@
+body {
+    background-color: #fff5f5; /* Màu hồng phấn nhẹ */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+.navbar {
+    background-color: #ff8fa3;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+.navbar-brand, .nav-link {
+    color: white !important;
+    font-weight: bold;
+}
+.card {
+    border: none;
+    border-radius: 15px;
+    transition: transform 0.2s;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    overflow: hidden;
+}
+.card:hover {
+    transform: translateY(-5px);
+}
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+}
+.btn-primary {
+    background-color: #ff5c8d;
+    border: none;
+    border-radius: 20px;
+}
+.btn-primary:hover {
+    background-color: #ff3370;
+}
+.gallery-img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    margin: 5px;
+    border-radius: 10px;
+    cursor: pointer;
+    border: 2px solid transparent;
+}
+.gallery-img.active {
+    border-color: #ff5c8d;
+}
+.form-container {
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}

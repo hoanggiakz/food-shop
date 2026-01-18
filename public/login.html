@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đăng nhập - Food Shop</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #ff6b6b;
+      --secondary: #ffd93d;
+    }
+    
+    body {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    .login-card {
+      background: white;
+      border-radius: 30px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      overflow: hidden;
+      max-width: 450px;
+      width: 100%;
+    }
+    
+    .login-header {
+      background: linear-gradient(135deg, var(--primary) 0%, #ff8787 100%);
+      padding: 40px 30px;
+      text-align: center;
+      color: white;
+    }
+    
+    .login-header i {
+      font-size: 4rem;
+      margin-bottom: 15px;
+    }
+    
+    .login-header h2 {
+      font-weight: bold;
+      margin: 0;
+    }
+    
+    .login-body {
+      padding: 40px 30px;
+    }
+    
+    .form-control {
+      border-radius: 15px;
+      padding: 12px 20px;
+      border: 2px solid #f0f0f0;
+      font-size: 1rem;
+    }
+    
+    .form-control:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 0.2rem rgba(255, 107, 107, 0.25);
+    }
+    
+    .btn-login {
+      background: linear-gradient(135deg, var(--primary) 0%, #ff8787 100%);
+      color: white;
+      border: none;
+      border-radius: 15px;
+      padding: 12px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      width: 100%;
+      transition: all 0.3s;
+    }
+    
+    .btn-login:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+    }
+    
+    .btn-back {
+      background: #6c757d;
+      color: white;
+      border: none;
+      border-radius: 15px;
+      padding: 12px;
+      font-size: 1rem;
+      width: 100%;
+      margin-top: 10px;
+    }
+    
+    .btn-back:hover {
+      background: #5a6268;
+    }
+    
+    .alert {
+      border-radius: 15px;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-card">
+    <div class="login-header">
+      <i class="fas fa-user-circle"></i>
+      <h2>Đăng nhập</h2>
+      <p class="mb-0">Chỉ dành cho Admin & Người bán</p>
+    </div>
+    
+    <div class="login-body">
+      <div id="alert-container"></div>
+      
+      <form id="loginForm">
+        <div class="mb-3">
+          <label class="form-label">
+            <i class="fas fa-user"></i> Tên đăng nhập
+          </label>
+          <input type="text" class="form-control" id="username" required placeholder="Nhập tên đăng nhập">
+        </div>
+        
+        <div class="mb-4">
+          <label class="form-label">
+            <i class="fas fa-lock"></i> Mật khẩu
+          </label>
+          <input type="password" class="form-control" id="password" required placeholder="Nhập mật khẩu">
+        </div>
+        
+        <button type="submit" class="btn btn-login">
+          <i class="fas fa-sign-in-alt"></i> Đăng nhập
+        </button>
+        
+        <button type="button" class="btn btn-back" onclick="window.location.href='/'">
+          <i class="fas fa-arrow-left"></i> Về trang chủ
+        </button>
+      </form>
+      
+      <div class="mt-4 text-center text-muted">
+        <small>&copy; Gia Bố Đời</small>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const alertContainer = document.getElementById('alert-container');
+    
+    function showAlert(message, type = 'danger') {
+      alertContainer.innerHTML = `
+        <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+          ${message}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      `;
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+      
+      if (!username || !password) {
+        showAlert('Vui lòng điền đầy đủ thông tin!');
+        return;
+      }
+      
+      try {
+        const response = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          showAlert(`Đăng nhập thành công! Chào ${result.username}`, 'success');
+          
+          // Chuyển hướng theo role
+          setTimeout(() => {
+            if (result.role === 'admin') {
+              window.location.href = '/admin';
+            } else if (result.role === 'seller') {
+              window.location.href = '/seller';
+            }
+          }, 1000);
+        } else {
+          showAlert(result.error || 'Đăng nhập thất bại!');
+        }
+      } catch (error) {
+        console.error('Login error:', error);
+        showAlert('Có lỗi xảy ra. Vui lòng thử lại!');
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chi tiết sản phẩm - Food Shop</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #ff6b6b;
+      --secondary: #ffd93d;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #fff5f5 0%, #fff 100%);
+      min-height: 100vh;
+    }
+    
+    .navbar {
+      background: linear-gradient(135deg, var(--primary) 0%, #ff8787 100%);
+      box-shadow: 0 4px 12px rgba(255, 107, 107, 0.2);
+    }
+    
+    .navbar-brand {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: white !important;
+    }
+    
+    .main-image {
+      width: 100%;
+      height: 500px;
+      object-fit: cover;
+      border-radius: 20px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+    
+    .thumbnail-gallery {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+      overflow-x: auto;
+      padding-bottom: 10px;
+    }
+    
+    .thumbnail {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 10px;
+      cursor: pointer;
+      border: 3px solid transparent;
+      transition: all 0.3s;
+    }
+    
+    .thumbnail:hover, .thumbnail.active {
+      border-color: var(--primary);
+      transform: scale(1.05);
+    }
+    
+    .product-info {
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    
+    .product-title {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 20px;
+    }
+    
+    .product-price {
+      font-size: 2rem;
+      color: var(--primary);
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+    
+    .product-description {
+      font-size: 1.1rem;
+      color: #666;
+      line-height: 1.8;
+      margin-bottom: 30px;
+    }
+    
+    .btn-buy {
+      background: linear-gradient(135deg, var(--primary) 0%, #ff8787 100%);
+      color: white;
+      font-size: 1.3rem;
+      padding: 15px 40px;
+      border-radius: 50px;
+      border: none;
+      box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+      transition: all 0.3s;
+    }
+    
+    .btn-buy:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+    }
+    
+    .modal-content {
+      border-radius: 20px;
+    }
+    
+    .modal-header {
+      background: linear-gradient(135deg, var(--primary) 0%, #ff8787 100%);
+      color: white;
+      border-radius: 20px 20px 0 0;
+    }
+    
+    @media (max-width: 768px) {
+      .main-image {
+        height: 300px;
+      }
+      
+      .product-title {
+        font-size: 1.8rem;
+      }
+      
+      .product-price {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+      <a class="navbar-brand" href="/">
+        <i class="fas fa-utensils"></i> Food Shop
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/">Trang chủ</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/login.html">
+              <i class="fas fa-sign-in-alt"></i> Đăng nhập
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Product Detail -->
+  <div class="container my-5">
+    <div id="loading" class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Đang tải...</span>
+      </div>
+    </div>
+
+    <div id="product-detail" style="display: none;">
+      <div class="row g-4">
+        <!-- Image Gallery -->
+        <div class="col-lg-6">
+          <img id="main-image" class="main-image" src="" alt="">
+          <div id="thumbnail-gallery" class="thumbnail-gallery"></div>
+        </div>
+
+        <!-- Product Info -->
+        <div class="col-lg-6">
+          <div class="product-info">
+            <h1 id="product-name" class="product-title"></h1>
+            <div id="product-price" class="product-price"></div>
+            <div id="product-description" class="product-description"></div>
+            <button class="btn btn-buy btn-lg" data-bs-toggle="modal" data-bs-target="#orderModal">
+              <i class="fas fa-shopping-cart"></i> MUA NGAY
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Order Modal -->
+  <div class="modal fade" id="orderModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="fas fa-shopping-bag"></i> Đặt hàng</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form id="orderForm">
+            <div class="mb-3">
+              <label class="form-label">Tên của bạn *</label>
+              <input type="text" class="form-control" id="customerName" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Email *</label>
+              <input type="email" class="form-control" id="customerEmail" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Số lượng *</label>
+              <input type="number" class="form-control" id="quantity" min="1" value="1" required>
+            </div>
+            <div class="alert alert-info">
+              <strong>Tổng tiền:</strong> <span id="totalPrice">0</span> đ
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+          <button type="button" class="btn btn-primary" onclick="submitOrder()">Xác nhận đặt hàng</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    let currentProduct = null;
+
+    // Lấy ID sản phẩm từ URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const productId = urlParams.get('id');
+
+    // Load chi tiết sản phẩm
+    async function loadProduct() {
+      if (!productId) {
+        alert('Không tìm thấy sản phẩm!');
+        window.location.href = '/';
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/products/${productId}`);
+        
+        if (!response.ok) {
+          throw new Error('Product not found');
+        }
+
+        currentProduct = await response.json();
+
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('product-detail').style.display = 'block';
+
+        // Hiển thị thông tin
+        document.getElementById('product-name').textContent = currentProduct.name;
+        document.getElementById('product-price').textContent = 
+          `${currentProduct.price.toLocaleString('vi-VN')} đ/${currentProduct.unit}`;
+        document.getElementById('product-description').textContent = currentProduct.description;
+
+        // Hiển thị ảnh chính
+        const mainImage = document.getElementById('main-image');
+        mainImage.src = currentProduct.thumbnail;
+        mainImage.alt = currentProduct.name;
+
+        // Hiển thị gallery
+        const gallery = document.getElementById('thumbnail-gallery');
+        currentProduct.images.forEach((img, index) => {
+          const thumb = document.createElement('img');
+          thumb.src = img;
+          thumb.className = 'thumbnail' + (img === currentProduct.thumbnail ? ' active' : '');
+          thumb.onclick = () => changeMainImage(img);
+          gallery.appendChild(thumb);
+        });
+
+        // Cập nhật tổng tiền khi thay đổi số lượng
+        document.getElementById('quantity').addEventListener('input', updateTotal);
+        updateTotal();
+
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Không thể tải sản phẩm!');
+        window.location.href = '/';
+      }
+    }
+
+    function changeMainImage(imgSrc) {
+      document.getElementById('main-image').src = imgSrc;
+      
+      // Cập nhật active thumbnail
+      document.querySelectorAll('.thumbnail').forEach(thumb => {
+        thumb.classList.toggle('active', thumb.src.includes(imgSrc));
+      });
+    }
+
+    function updateTotal() {
+      const quantity = parseInt(document.getElementById('quantity').value) || 1;
+      const total = currentProduct.price * quantity;
+      document.getElementById('totalPrice').textContent = total.toLocaleString('vi-VN');
+    }
+
+    async function submitOrder() {
+      const customerName = document.getElementById('customerName').value.trim();
+      const customerEmail = document.getElementById('customerEmail').value.trim();
+      const quantity = parseInt(document.getElementById('quantity').value);
+
+      // Validate
+      if (!customerName || !customerEmail || !quantity) {
+        alert('Vui lòng điền đầy đủ thông tin!');
+        return;
+      }
+
+      if (quantity < 1) {
+        alert('Số lượng phải lớn hơn 0!');
+        return;
+      }
+
+      // Validate email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(customerEmail)) {
+        alert('Email không hợp lệ!');
+        return;
+      }
+
+      // Disable button to prevent double submission
+      const submitBtn = event.target;
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang xử lý...';
+
+      try {
+        const response = await fetch('/api/orders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            productId: currentProduct.id,
+            customerName,
+            customerEmail,
+            quantity
+          })
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+          alert('✅ Đặt hàng thành công!\n\nChúng tôi đã gửi email xác nhận đến: ' + customerEmail + '\n\nMã đơn hàng: #' + result.invoice.id);
+          bootstrap.Modal.getInstance(document.getElementById('orderModal')).hide();
+          document.getElementById('orderForm').reset();
+          updateTotal();
+        } else {
+          alert('❌ ' + (result.error || 'Có lỗi xảy ra. Vui lòng thử lại!'));
+        }
+      } catch (error) {
+        console.error('Order submission error:', error);
+        alert('❌ Không thể kết nối đến server!\n\nVui lòng kiểm tra:\n- Kết nối internet\n- Server đang chạy\n- Port 3000 không bị chặn');
+      } finally {
+        // Re-enable button
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = 'Xác nhận đặt hàng';
+      }
+    }
+
+    // Load product khi trang được tải
+    loadProduct();
+  </script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "username": "hoanggiakz",
+    "password": "Hoanggiakz***",
+    "role": "admin"
+  },
+  {
+    "id": 1768730252587,
+    "username": "test",
+    "password": "12345",
+    "email": "giabodoiday@gmail.com",
+    "role": "seller"
+  },
+  {
+    "id": 1768730749238,
+    "username": "test2",
+    "password": "123456",
+    "email": "giabodoiday@gmail.com",
+    "role": "seller",
+    "createdAt": "2026-01-18T10:05:49.238Z"
+  }
+]
